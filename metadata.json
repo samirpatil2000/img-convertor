@@ -1,0 +1,5 @@
+{
+  "name": "HEIC Convert",
+  "description": "A minimalist, private, and high-performance HEIC to JPG converter that runs entirely in your browser.",
+  "requestFramePermissions": []
+}
