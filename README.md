@@ -1,20 +1,41 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Pixel Utility
 
-# Run and deploy your AI Studio app
+A minimalist, high-performance, and private-by-design suite of image tools that feels native to your operating system. Designed with the latest Apple interface guidelines in mind.
 
-This contains everything you need to run your app locally.
+## 🛠 Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1rII80RYn0GjeW7-IbhnIYY9nCISGuX6U
+### 1. HEIC to JPG Converter
+- **Batch Processing**: Drop multiple `.heic` or `.heif` files to convert them simultaneously.
+- **High Fidelity**: Converts Apple's High Efficiency Image Format to high-quality JPEGs without losing essential details.
+- **Smart Downloads**: Automatically provides a ZIP archive for multiple files or a direct image download for single conversions.
 
-## Run Locally
+### 2. Professional Image Compressor
+- **Granular Controls**: Adjust target file size (MB) and maximum dimensions (pixels) to find the perfect balance between quality and weight.
+- **Advanced Algorithms**: Uses `browser-image-compression` for state-of-the-art client-side optimization.
+- **Real-time Feedback**: Displays compression ratios and space saved for every image.
 
-**Prerequisites:**  Node.js
+## 🔒 Privacy First
 
+Pixel Utility is **100% serverless**. 
+- **No Uploads**: Your images are processed entirely within your browser's memory.
+- **No Tracking**: We don't track your files, your data, or your usage.
+- **Offline Ready**: Once loaded, the utility can function without an active internet connection.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 🎨 Design Philosophy
+
+Inspired by the latest macOS and iOS aesthetics:
+- **SF-like Typography**: Using Inter for clean, legible text.
+- **Glassmorphism**: Subtle backdrops and blurs that adapt to your environment.
+- **Fluid Motion**: Smooth transitions and subtle pulses for processing states.
+- **Native Components**: Segmented controls and range sliders that feel familiar.
+
+## 🚀 Tech Stack
+
+- **React 19**: Modern UI framework.
+- **Tailwind CSS**: Utility-first styling for precise Apple-like spacing.
+- **heic2any**: Powerful local HEIC decoding.
+- **browser-image-compression**: Professional-grade compression.
+- **JSZip**: Efficient client-side archiving.
+
+---
+*Your images never leave your device. Secure, fast, and free.*
