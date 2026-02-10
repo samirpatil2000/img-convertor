@@ -6,6 +6,11 @@ export enum ConversionStatus {
   FAILED = 'FAILED'
 }
 
+export enum AppTab {
+  CONVERT = 'CONVERT',
+  COMPRESS = 'COMPRESS'
+}
+
 export interface FileRecord {
   id: string;
   originalFile: File;
@@ -15,10 +20,13 @@ export interface FileRecord {
   progress: number;
   resultUrl?: string;
   resultBlob?: Blob;
+  resultSize?: number;
   error?: string;
 }
 
-export interface AppState {
-  files: FileRecord[];
-  isDragging: boolean;
+export interface CompressionSettings {
+  maxSizeMB: number;
+  maxWidthOrHeight: number;
+  useWebWorker: boolean;
+  fileType: string;
 }
