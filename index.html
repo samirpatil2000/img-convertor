@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEIC Convert</title>
+    <title>Pixel Utility</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,14 +29,12 @@
         .anim-pulse {
             animation: subtle-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-        /* Glass effect */
         .glass {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        /* Custom scrollbar for a cleaner OS feel */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -76,21 +74,22 @@
 <script type="importmap">
 {
   "imports": {
-    "uuid": "https://esm.sh/uuid@^13.0.0",
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "uuid": "https://esm.sh/uuid@11.0.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4"
+    "react/": "https://esm.sh/react@^19.2.4/"
   }
 }
 </script>
 </head>
 <body class="text-slate-900">
     <div id="root"></div>
-    <!-- heic2any is required for conversion -->
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
-    <!-- browser-image-compression for the compressor tab -->
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <!-- jszip for batch downloading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Explicitly load the index.tsx entry point -->
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>

@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import DropZone from './components/DropZone';
-import FileItem from './components/FileItem';
-import { FileRecord, ConversionStatus, AppTab, CompressionSettings } from './types';
+import DropZone from './components/DropZone.tsx';
+import FileItem from './components/FileItem.tsx';
+import { FileRecord, ConversionStatus, AppTab, CompressionSettings } from './types.ts';
 
 // Declare globals for libraries loaded via CDN
 declare const heic2any: any;
@@ -141,7 +141,6 @@ const App: React.FC = () => {
     const completedFiles = files.filter(f => f.status === ConversionStatus.COMPLETED && f.resultBlob);
     if (completedFiles.length === 0) return;
 
-    // If there's only one file, just download it directly instead of zipping
     if (completedFiles.length === 1) {
       handleDownloadSingle(completedFiles[0]);
       return;
@@ -182,7 +181,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20">
-      {/* OS-like Header with Tabs */}
       <div className="sticky top-0 z-40 glass border-b border-slate-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -195,7 +193,6 @@ const App: React.FC = () => {
               <h1 className="text-xl font-bold tracking-tight text-slate-900">Pixel Utility</h1>
             </div>
 
-            {/* Segmented Control */}
             <div className="bg-slate-200/50 p-1 rounded-xl flex">
               <button 
                 onClick={() => { setActiveTab(AppTab.CONVERT); clearAll(); }}
@@ -230,7 +227,6 @@ const App: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        {/* Intro */}
         <div className="mb-12 text-center sm:text-left">
           <h2 className="text-4xl font-bold tracking-tight text-slate-900 mb-2">
             {activeTab === AppTab.CONVERT ? 'HEIC to JPG' : 'Image Compressor'}
@@ -242,7 +238,6 @@ const App: React.FC = () => {
           </p>
         </div>
 
-        {/* Compression Controls (Visible only in Compress Tab) */}
         {activeTab === AppTab.COMPRESS && (
           <div className="mb-10 bg-white p-6 rounded-[2rem] apple-shadow border border-slate-100 flex flex-wrap gap-8 items-center">
             <div className="flex-1 min-w-[200px]">
