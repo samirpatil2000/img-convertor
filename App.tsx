@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import DropZone from './components/DropZone.tsx';
 import FileItem from './components/FileItem.tsx';
-import { FileRecord, ConversionStatus, AppTab, CompressionSettings } from './types.ts';
+import { FileRecord, ConversionStatus, AppTab, CompressionSettings, CompressionMode } from './types.ts';
 
 // Declare globals for libraries loaded via CDN
 declare const heic2any: any;
@@ -19,7 +19,9 @@ const App: React.FC = () => {
   
   // Compression Settings
   const [compressionSettings, setCompressionSettings] = useState<CompressionSettings>({
+    mode: CompressionMode.MB,
     maxSizeMB: 1,
+    maxSizePercent: 50,
     maxWidthOrHeight: 1920,
     useWebWorker: true,
     fileType: 'image/jpeg'
@@ -76,8 +78,17 @@ const App: React.FC = () => {
         resultBlob = Array.isArray(blob) ? blob[0] : blob;
       } else {
         // COMPRESS
+        let targetMB = compressionSettings.maxSizeMB;
+        if (compressionSettings.mode === CompressionMode.PERCENTAGE) {
+          // Calculate MB from percentage of original file size
+          const originalMB = fileRecord.size / (1024 * 1024);
+          targetMB = originalMB * (compressionSettings.maxSizePercent / 100);
+          // Ensure at least a tiny bit of data is allowed
+          targetMB = Math.max(0.01, targetMB);
+        }
+
         resultBlob = await imageCompression(fileRecord.originalFile, {
-          maxSizeMB: compressionSettings.maxSizeMB,
+          maxSizeMB: targetMB,
           maxWidthOrHeight: compressionSettings.maxWidthOrHeight,
           useWebWorker: compressionSettings.useWebWorker,
           fileType: compressionSettings.fileType,
@@ -240,24 +251,57 @@ const App: React.FC = () => {
 
         {activeTab === AppTab.COMPRESS && (
           <div className="mb-10 bg-white p-6 rounded-[2rem] apple-shadow border border-slate-100 flex flex-wrap gap-8 items-center">
-            <div className="flex-1 min-w-[200px]">
-              <div className="flex justify-between mb-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Target Max Size</label>
-                <span className="text-sm font-bold text-[#0071e3]">{compressionSettings.maxSizeMB} MB</span>
+            <div className="flex-1 min-w-[280px]">
+              <div className="flex justify-between items-center mb-3">
+                <div className="flex flex-col">
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Target Size</label>
+                  <span className="text-sm font-bold text-[#0071e3]">
+                    {compressionSettings.mode === CompressionMode.MB 
+                      ? `${compressionSettings.maxSizeMB} MB` 
+                      : `${compressionSettings.maxSizePercent}% of original`}
+                  </span>
+                </div>
+                {/* MB/Percentage Segmented Toggle */}
+                <div className="bg-slate-100 p-1 rounded-lg flex scale-90">
+                  <button 
+                    onClick={() => setCompressionSettings(prev => ({ ...prev, mode: CompressionMode.MB }))}
+                    className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${compressionSettings.mode === CompressionMode.MB ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'}`}
+                  >
+                    MB
+                  </button>
+                  <button 
+                    onClick={() => setCompressionSettings(prev => ({ ...prev, mode: CompressionMode.PERCENTAGE }))}
+                    className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${compressionSettings.mode === CompressionMode.PERCENTAGE ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'}`}
+                  >
+                    %
+                  </button>
+                </div>
               </div>
-              <input 
-                type="range" min="0.1" max="10" step="0.1" 
-                value={compressionSettings.maxSizeMB}
-                onChange={(e) => setCompressionSettings(prev => ({ ...prev, maxSizeMB: parseFloat(e.target.value) }))}
-              />
+              
+              {compressionSettings.mode === CompressionMode.MB ? (
+                <input 
+                  type="range" min="0.1" max="50" step="0.1" 
+                  value={compressionSettings.maxSizeMB}
+                  onChange={(e) => setCompressionSettings(prev => ({ ...prev, maxSizeMB: parseFloat(e.target.value) }))}
+                />
+              ) : (
+                <input 
+                  type="range" min="1" max="100" step="1" 
+                  value={compressionSettings.maxSizePercent}
+                  onChange={(e) => setCompressionSettings(prev => ({ ...prev, maxSizePercent: parseInt(e.target.value) }))}
+                />
+              )}
             </div>
-            <div className="flex-1 min-w-[200px]">
-              <div className="flex justify-between mb-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Max Dimension</label>
-                <span className="text-sm font-bold text-[#0071e3]">{compressionSettings.maxWidthOrHeight} px</span>
+            
+            <div className="flex-1 min-w-[280px]">
+              <div className="flex justify-between mb-3">
+                <div className="flex flex-col">
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Max Dimension</label>
+                  <span className="text-sm font-bold text-[#0071e3]">{compressionSettings.maxWidthOrHeight} px</span>
+                </div>
               </div>
               <input 
-                type="range" min="800" max="8000" step="100" 
+                type="range" min="400" max="8000" step="100" 
                 value={compressionSettings.maxWidthOrHeight}
                 onChange={(e) => setCompressionSettings(prev => ({ ...prev, maxWidthOrHeight: parseInt(e.target.value) }))}
               />

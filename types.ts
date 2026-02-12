@@ -11,6 +11,11 @@ export enum AppTab {
   COMPRESS = 'COMPRESS'
 }
 
+export enum CompressionMode {
+  MB = 'MB',
+  PERCENTAGE = 'PERCENTAGE'
+}
+
 export interface FileRecord {
   id: string;
   originalFile: File;
@@ -25,7 +30,9 @@ export interface FileRecord {
 }
 
 export interface CompressionSettings {
+  mode: CompressionMode;
   maxSizeMB: number;
+  maxSizePercent: number;
   maxWidthOrHeight: number;
   useWebWorker: boolean;
   fileType: string;
