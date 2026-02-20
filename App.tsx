@@ -1,9 +1,9 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import DropZone from './components/DropZone.tsx';
 import FileItem from './components/FileItem.tsx';
-import { FileRecord, ConversionStatus, AppTab, CompressionSettings, CompressionMode } from './types.ts';
+import { AppTab, CompressionMode, CompressionSettings, ConversionStatus, FileRecord } from './types.ts';
 
 // Declare globals for libraries loaded via CDN
 declare const heic2any: any;
@@ -23,6 +23,7 @@ const App: React.FC = () => {
     maxSizeMB: 1,
     maxSizePercent: 50,
     maxWidthOrHeight: 1920,
+    keepOriginalDimensions: false,
     useWebWorker: true,
     fileType: 'image/jpeg'
   });
@@ -87,15 +88,20 @@ const App: React.FC = () => {
           targetMB = Math.max(0.01, targetMB);
         }
 
-        resultBlob = await imageCompression(fileRecord.originalFile, {
+        const options: any = {
           maxSizeMB: targetMB,
-          maxWidthOrHeight: compressionSettings.maxWidthOrHeight,
           useWebWorker: compressionSettings.useWebWorker,
           fileType: compressionSettings.fileType,
           onProgress: (p: number) => {
              setFiles(prev => prev.map(f => f.id === fileRecord.id ? { ...f, progress: p } : f));
           }
-        });
+        };
+
+        if (!compressionSettings.keepOriginalDimensions) {
+          options.maxWidthOrHeight = compressionSettings.maxWidthOrHeight;
+        }
+
+        resultBlob = await imageCompression(fileRecord.originalFile, options);
       }
 
       const url = URL.createObjectURL(resultBlob);
@@ -294,15 +300,28 @@ const App: React.FC = () => {
             </div>
             
             <div className="flex-1 min-w-[280px]">
-              <div className="flex justify-between mb-3">
+              <div className="flex justify-between items-center mb-3">
                 <div className="flex flex-col">
                   <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Max Dimension</label>
-                  <span className="text-sm font-bold text-[#0071e3]">{compressionSettings.maxWidthOrHeight} px</span>
+                  <span className={`text-sm font-bold ${compressionSettings.keepOriginalDimensions ? 'text-slate-400' : 'text-[#0071e3]'}`}>
+                    {compressionSettings.keepOriginalDimensions ? 'Original' : `${compressionSettings.maxWidthOrHeight} px`}
+                  </span>
                 </div>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="w-4 h-4 rounded border-slate-300 text-[#0071e3] focus:ring-[#0071e3]"
+                    checked={compressionSettings.keepOriginalDimensions}
+                    onChange={(e) => setCompressionSettings(prev => ({ ...prev, keepOriginalDimensions: e.target.checked }))}
+                  />
+                  <span className="text-xs font-bold text-slate-500">Original</span>
+                </label>
               </div>
               <input 
                 type="range" min="400" max="8000" step="100" 
                 value={compressionSettings.maxWidthOrHeight}
+                disabled={compressionSettings.keepOriginalDimensions}
+                className={compressionSettings.keepOriginalDimensions ? 'opacity-50 cursor-not-allowed' : ''}
                 onChange={(e) => setCompressionSettings(prev => ({ ...prev, maxWidthOrHeight: parseInt(e.target.value) }))}
               />
             </div>

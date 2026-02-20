@@ -34,6 +34,7 @@ export interface CompressionSettings {
   maxSizeMB: number;
   maxSizePercent: number;
   maxWidthOrHeight: number;
+  keepOriginalDimensions: boolean;
   useWebWorker: boolean;
   fileType: string;
 }
